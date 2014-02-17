@@ -6,20 +6,6 @@ require("inifile")
 require("getopt_alt")
 
 ROM_NAME_DEFAULT = "rom.bin"
-
--- -o rom_name
--- -i config_file
--- --no-ini			//set no-input and do not read or create an ini file
--- --no-input		//use no-ini instead of user input to determine whether to create ini
-
--- checklist:
--- +read config file and map it to t
--- +override values with command line arguments
--- +if config file doesn't exist, create new
--- +overwrite rom_head.c with our project
--- +run make with our custom rom name
--- +rename rom
-
 config = {
 	sys = {
 		output_name = ROM_NAME_DEFAULT,
@@ -132,7 +118,6 @@ end
 function main()
 
 	opts = getopt(arg, "oi")
-	--print(opts.e)
 	local inifile = "sgmake.ini"
 	if opts.i then
 		inifile = opts.i
@@ -193,7 +178,7 @@ function main()
 	for k,v in ipairs(ordered_data) do
 		rom_head_file:write(fw(config.header[v]))
 	end
-	
+
 	rom_head_file:write(rom_head_end)
 	rom_head_file:close()
 	print("rom_head.c written")
