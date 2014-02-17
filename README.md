@@ -3,7 +3,7 @@ sgmake
 
 sgmake is a script that allows you to run the sega genesis development kit (sgdk) compiler with custom metadata. if you were wondering how to replace the "SAMPLE PROGRAM" text that appears when playing your games in an emulator, this is one solution.
 
-the compiled executable can be found at http://cosstropolis.com/toys/sgmake.zip - if you would prefer to compile from source, see below.
+the compiled executable can be found at http://cosstropolis.com/static/files/sgmake.zip - if you would prefer to compile from source, see below.
 
 building from source
 --------------------
