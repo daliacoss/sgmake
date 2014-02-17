@@ -9,7 +9,7 @@ ROM_NAME_DEFAULT = "rom.bin"
 
 -- -o rom_name
 -- -i config_file
--- --no-ini			//do not read or create an ini file
+-- --no-ini			//set no-input and do not read or create an ini file
 -- --no-input		//use no-ini instead of user input to determine whether to create ini
 
 -- checklist:
@@ -59,9 +59,7 @@ string_widths = {
 	region = 16
 }
 
-rom_head_include = [[#include "types.h"
-]]
-rom_head_dec = [[
+rom_head_start = [[#include "types.h"
 
 const struct{
 	char console[16];        /* Console Name (16) */
@@ -83,8 +81,8 @@ const struct{
 	char notes[40];          /* Memo (40) */
 	char region[16];         /* Country Support (16) */
 } rom_header = {
-%s};
 ]]
+rom_head_end = "};"
 
 function setConfigFromIni(fname)
 	local t = inifile.parse(fname)
@@ -164,34 +162,39 @@ function main()
 	-- write rom_head.c
 	local boot_dir = evaluate(config.sys.sgdk_src_boot)
 	local rom_head_file = io.open(boot_dir .. "/rom_head.c", "w")
+	rom_head_file:write(rom_head_start)
+
+	--use a loop to write each line to avoid expensive string concatenation
+	ordered_data = {
+		"console",
+		"copyright",
+		"title_local",
+		"title_int",
+		"serial",
+		"checksum",
+		"IOSupport",
+		"rom_start",
+		"rom_end",
+		"ram_start",
+		"ram_end",
+		"sram_sig",
+		"sram_type",
+		"sram_start",
+		"sram_end",
+		"modem_support",
+		"notes",
+		"region",
+	}
 	local fw = function(s)
 		--only wrap in quotes if s is string
 		if type(s)=="string" then q = "\"" else q = "" end
 		return "\t"..q..s..q..",\n"
 	end
-
-	--use a loop to write each line to avoid expensive string concatenation
-	local rom_head_data = rom_head_include .. rom_head_dec:format(
-		fw(config.header.console)..
-		fw(config.header.copyright)..
-		fw(config.header.title_local)..
-		fw(config.header.title_int)..
-		fw(config.header.serial)..
-		fw(config.header.checksum)..
-		fw(config.header.IOSupport)..
-		fw(config.header.rom_start)..
-		fw(config.header.rom_end)..
-		fw(config.header.ram_start)..
-		fw(config.header.ram_end)..
-		fw(config.header.sram_sig)..
-		fw(config.header.sram_type)..
-		fw(config.header.sram_start)..
-		fw(config.header.sram_end)..
-		fw(config.header.modem_support)..
-		fw(config.header.notes)..
-		fw(config.header.region)
-	)
-	rom_head_file:write(rom_head_data)
+	for k,v in ipairs(ordered_data) do
+		rom_head_file:write(fw(config.header[v]))
+	end
+	
+	rom_head_file:write(rom_head_end)
 	rom_head_file:close()
 	print("rom_head.c written")
 
