@@ -1,7 +1,7 @@
 sgmake
 ======
 
-sgmake is a script that allows you to run the sega genesis development kit (sgdk) compiler with custom metadata. if you were wondering how to replace the "SAMPLE PROGRAM" text that appears when playing your games in an emulator, this is one solution.
+sgmake is a script that allows you to run the sega genesis development kit (sgdk) compiler and the sgdk resource compiler (rescomp) with custom metadata. if you were wondering how to replace the "SAMPLE PROGRAM" text that appears when playing your games in an emulator, this is one solution.
 
 the compiled executable can be found at http://cosstropolis.com/static/files/sgmake.zip - if you would prefer to compile from source, see below.
 
@@ -19,7 +19,8 @@ sgmake will search for sgmake.ini in the project directory; this is where you se
 
 options
 -------
--o myname.bin    : set output file name to name.bin  
 -i myconfig.ini  : use myconfig.ini instead of sgmake.ini  
+-o myname.bin    : set output file name to name.bin  
 --no-ini         : do not use or create an ini file (overrides -i)  
 --no-input       : do not ask user before creating (or ignoring) an ini file  
+--no-rescomp     : do not run rescomp  
