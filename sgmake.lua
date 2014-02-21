@@ -183,15 +183,26 @@ function main()
 	rom_head_file:close()
 	print("rom_head.c written")
 
-	-- compile game
+	-- run rescomp
 	local sgdk_path = config.sys.sgdk_path
-	local command = "%s\\bin\\make -f %s\\makefile.gen"
+	local no_rescomp = opts["no-rescomp"]
+	local command = "%s\\bin\\rescomp -convert res res\\resources.res"
+	if not no_rescomp then
+		if os.execute("dir res") == 0 then
+			command = command:format(sgdk_path)
+			print("executing command: "..command)
+			os.execute(command)
+		end
+	end
+
+	-- compile game
+	command = "%s\\bin\\make -f %s\\makefile.gen"
 	command = command:format(sgdk_path,sgdk_path)
 	print("executing command: "..command) 
 	local status = os.execute(command)
 
-	-- rename rom
-	if (status==0) then
+	-- rename rom if compile succeeded
+	if status == 0 then
 		local output_name = ""
 		if opts.o then
 			output_name = opts.o
